@@ -2,35 +2,23 @@
 import sys
 
 import pygame
-from functions import *
+from functions import start_algorithm
+from functions import draw_path
+from grid import Grid
 #import tiles
 
-pygame.init()
-WIDTH = 640
-HEIGHT = 640
+NUMBER_OF_BLOCKS = 16
 BLOCK_SIZE = 38
-NUMBER_OF_BLOCKS = WIDTH//(BLOCK_SIZE+2)
-blocks = []
+HEIGHT = WIDTH = NUMBER_OF_BLOCKS*(BLOCK_SIZE+2)
 
+pygame.init()
 clock = pygame.time.Clock()
-
-#FLAGS
-flags = {
-    "drag": False,
-    "drag_start_tile_state": None,
-    "drag_start_tile": None,
-}
-
-screen = pygame.display.set_mode((WIDTH, HEIGHT+80))
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 screen.fill((0,0,0))
-grid = get_empty_grid(WIDTH, HEIGHT, BLOCK_SIZE)
-# print(grid)
-# grid[0][0].makeStart()
-# grid[0][1].makeFinish()
 
-for row in grid:
-    for element in row:
-        element.updateColour(screen)
+# initalize grid on screen
+grid = Grid(NUMBER_OF_BLOCKS, BLOCK_SIZE, screen)
+
 
 while True:
     clock.tick(45)
@@ -40,20 +28,24 @@ while True:
             sys.exit()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            flags["drag"] = True
-            set_drag_start_tile(grid, flags, pygame.mouse.get_pos())
-        elif event.type == pygame.MOUSEBUTTONUP:
-            reset_falgs(flags)
+            grid.set_drag(True)
+            grid.set_drag_start_tile(pygame.mouse.get_pos())
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            grid.set_drag(False)
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_g:
-                start_algorithm(grid)
+                grid.cleanup()
+                path = start_algorithm(grid)
+                draw_path(path[-1])
+            elif event.key == pygame.K_c:
+                grid.cleanup(1)
+
 
     # handling of a drag-drawing
-    if flags["drag"]:
-        for row in grid:
-            for element in row:
-                update_labels(element, flags, pygame.mouse.get_pos())
-                element.updateColour(screen)
-        grid = update_grid_list(grid)
+    if grid.drag:
+        grid.drag_drawing(pygame.mouse.get_pos())
+        grid.update_grid_list()
 
     pygame.display.flip()

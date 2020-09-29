@@ -1,5 +1,4 @@
 """grid class"""
-from math import sqrt
 import pygame
 from tiles import Tile
 
@@ -54,11 +53,11 @@ class Grid():
             pass
 
         #remove walls
-        successors = list(filter(lambda x: x.state != "walls", successors))
+        successors = list(filter(lambda x: x.state != "wall", successors))
         
         #change to paths
-        for x in successors:
-            x.parent = node
+        # for x in successors:
+        #     x.parent = node
         return successors
         
     def set_drag_start_tile(self, mouse_pos):
@@ -76,11 +75,11 @@ class Grid():
             for element in row:
                 if element.collidepoint(mouse_pos):
                     # case1: starting at normal, drawing through wall
-                    if self._test_state == "normal" and element.state != "start" and element.state != "finish":
+                    if (self._test_state == "normal" or self._test_state == "path") and element.state != "start" and element.state != "finish":
                         element.makeWall()
 
                     # case2: starting at wall, drawing through normal (erasing)
-                    elif (self._test_state == "wall" or self._test_state == "path") and element.state != "start" and element.state != "finish":
+                    elif self._test_state == "wall" and element.state != "start" and element.state != "finish":
                         element.makeNormal()
 
                     # case3: moving the start and finish tiles
@@ -97,4 +96,14 @@ class Grid():
     def distance(self, a, b):
         x = self.index_2d(a)[0] - self.index_2d(b)[0]
         y = self.index_2d(a)[1] - self.index_2d(b)[1]
-        return sqrt(x**2 + y**2)
+        # return sqrt(x**2 + y**2)
+        return abs(x)+abs(y)
+
+    def cleanup(self, v = 0):
+        for row in self.tiles:
+            for element in row:
+                if v != 0:
+                    if element.state == "wall":
+                        element.makeNormal()
+                if element.state == "path":
+                    element.makeNormal()

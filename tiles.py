@@ -18,6 +18,7 @@ class Tile(pygame.Rect):
         self.star_h = 0
         self.star_g = 0
         self.star_f = 0
+        self.parent = None
 
     def __repr__(self):
         #return "(" + str(self.x) + ", "+ str(self.y) +")"
