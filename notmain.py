@@ -2,7 +2,8 @@
 import sys
 
 import pygame
-from functions import *
+from functions import start_algorithm
+from functions import draw_path
 from grid import Grid
 #import tiles
 
@@ -10,24 +11,14 @@ NUMBER_OF_BLOCKS = 16
 BLOCK_SIZE = 38
 HEIGHT = WIDTH = NUMBER_OF_BLOCKS*(BLOCK_SIZE+2)
 
-
-#FLAGS
-flags = {
-    "drag": False,
-    "drag_start_tile_state": None,
-    "drag_start_tile": None,
-}
-
 pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((WIDTH, HEIGHT+80))
 screen.fill((0,0,0))
-grid = Grid(NUMBER_OF_BLOCKS, BLOCK_SIZE)
 
 # initalize grid on screen
-for row in grid.tiles:
-    for element in row:
-        element.updateColour(screen)
+grid = Grid(NUMBER_OF_BLOCKS, BLOCK_SIZE, screen)
+
 
 while True:
     clock.tick(45)
@@ -37,24 +28,21 @@ while True:
             sys.exit()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            flags["drag"] = True
-            set_drag_start_tile(grid.tiles, flags, pygame.mouse.get_pos())
+            grid.set_drag(True)
+            grid.set_drag_start_tile(pygame.mouse.get_pos())
 
         if event.type == pygame.MOUSEBUTTONUP:
-            reset_falgs(flags)
+            grid.set_drag(False)
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_g:
-                start_algorithm(grid.tiles)
+                path = start_algorithm(grid)
+                draw_path(path)
+
 
     # handling of a drag-drawing
-    if flags["drag"]:
-        for row in grid.tiles:
-            for element in row:
-                if element.collidepoint(pygame.mouse.get_pos()):
-                    update_labels(element, flags)
-                element.updateColour(screen)
-
+    if grid.drag:
+        grid.drag_drawing(pygame.mouse.get_pos())
         grid.update_grid_list()
 
     pygame.display.flip()
