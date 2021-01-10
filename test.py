@@ -1,9 +1,17 @@
-from copy import deepcopy
+import threading
+import time
 
-lista = [[1,2,3],[4,5,6],[7,8,9]]
+def gowno(a):
+    for _ in range(0,10):
+        print(a)
+        time.sleep(0.1)
 
-gowno = deepcopy(lista)
+def dupa(a):
+    for _ in range(0,10):
+        print(a)
+        time.sleep(0.1)
 
-gowno.append("kurwa")
-
-print(gowno, lista)
+x = threading.Thread(target=gowno, args=(2, ))
+y = threading.Thread(target=dupa, args=(6 ,))
+x.start()
+y.start()

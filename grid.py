@@ -7,9 +7,10 @@ class Grid():
     def __init__(self, number_of_nodes, block_size, screen):
         self.drag = False
         self.start_drag_tile = None
-        self._test_state = None
+        self.start_drag_tile_state = None
         self.tiles = []
         self._initialize_empty_list(number_of_nodes, block_size, screen)
+        self.number_of_nodes = number_of_nodes
         self.start_node = self.tiles[0][0].makeStart()
         self.finish_node = self.tiles[0][1].makeFinish()
 
@@ -45,10 +46,14 @@ class Grid():
         successors = []
         node.position = self.index_2d(node)
         try:
-            successors.append(self.tiles[node.position[0]-1][node.position[1]])
-            successors.append(self.tiles[node.position[0]][node.position[1]-1])
-            successors.append(self.tiles[node.position[0]][node.position[1]+1])
-            successors.append(self.tiles[node.position[0]+1][node.position[1]])
+            if node.position[0]-1 >= 0:
+                successors.append(self.tiles[node.position[0]-1][node.position[1]])
+            if node.position[1]-1 >= 0:
+                successors.append(self.tiles[node.position[0]][node.position[1]-1])
+            if node.position[1]+1 < self.number_of_nodes:
+                successors.append(self.tiles[node.position[0]][node.position[1]+1])
+            if node.position[0]+1 < self.number_of_nodes:
+                successors.append(self.tiles[node.position[0]+1][node.position[1]])
         except IndexError:
             pass
 
@@ -65,9 +70,9 @@ class Grid():
             for element in row:
                 if element.collidepoint(mouse_pos):
                     self.start_drag_tile = element
-                    self._test_state = element.state
+                    self.start_drag_tile_state = element.state
 
-    def set_drag(self, value):
+    def set_drag(self, value=True):
         self.drag = value
 
     def drag_drawing(self, mouse_pos):
@@ -75,15 +80,15 @@ class Grid():
             for element in row:
                 if element.collidepoint(mouse_pos):
                     # case1: starting at normal, drawing through wall
-                    if (self._test_state == "normal" or self._test_state == "path") and element.state != "start" and element.state != "finish":
+                    if (self.start_drag_tile_state == "normal" or self.start_drag_tile_state == "path") and element.state != "start" and element.state != "finish":
                         element.makeWall()
 
                     # case2: starting at wall, drawing through normal (erasing)
-                    elif self._test_state == "wall" and element.state != "start" and element.state != "finish":
+                    elif self.start_drag_tile_state == "wall" and element.state != "start" and element.state != "finish":
                         element.makeNormal()
 
                     # case3: moving the start and finish tiles
-                    elif self._test_state == "start" or self._test_state == "finish":
+                    elif self.start_drag_tile_state == "start" or self.start_drag_tile_state == "finish":
                         if element.state == "normal":
                             self.start_drag_tile.swtichTile(element)
 

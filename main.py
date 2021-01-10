@@ -2,8 +2,7 @@
 import sys
 
 import pygame
-from functions import start_algorithm
-from functions import draw_path
+from functions import start_algorithm, draw_path
 from grid import Grid
 #import tiles
 
@@ -19,33 +18,38 @@ screen.fill((0,0,0))
 # initalize grid on screen
 grid = Grid(NUMBER_OF_BLOCKS, BLOCK_SIZE, screen)
 
+def main():
+    """main"""
+    while True:
+        clock.tick(45)
+        # events handling
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
 
-while True:
-    clock.tick(45)
-    # events handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                grid.set_drag(True)
+                grid.set_drag_start_tile(pygame.mouse.get_pos())
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            grid.set_drag(True)
-            grid.set_drag_start_tile(pygame.mouse.get_pos())
+            if event.type == pygame.MOUSEBUTTONUP:
+                grid.set_drag(False)
 
-        if event.type == pygame.MOUSEBUTTONUP:
-            grid.set_drag(False)
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_g:
-                grid.cleanup()
-                path = start_algorithm(grid)
-                draw_path(path[-1])
-            elif event.key == pygame.K_c:
-                grid.cleanup(1)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_g:
+                    grid.cleanup()
+                    path = start_algorithm(grid)
+                    draw_path(path[-1])
+                elif event.key == pygame.K_c:
+                    grid.cleanup(1)
 
 
-    # handling of a drag-drawing
-    if grid.drag:
-        grid.drag_drawing(pygame.mouse.get_pos())
-        grid.update_grid_list()
+        # handling of a drag-drawing
+        if grid.drag:
+            grid.drag_drawing(pygame.mouse.get_pos())
+            grid.update_grid_list()
 
-    pygame.display.flip()
+        pygame.display.flip()
+
+
+if __name__ == "__main__":
+    main()

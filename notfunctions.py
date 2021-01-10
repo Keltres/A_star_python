@@ -2,15 +2,14 @@
 from functools import reduce
 
 def start_algorithm(grid):
-    """a* algorithm"""
     open_list = []
     closed_list = []
     open_list.append(grid.start_node)
     found = False
     while len(open_list) != 0 and not found:
 
-        # out of elements in OPEN list get the one with smallest f
-        q = reduce(lambda smallest, current: current if current.star_f < smallest.star_f else smallest, open_list)
+        # out of elements in OPEN list get the one with smallest f 
+        q = reduce(lambda smallest, current: current if current.star_f <= smallest.star_f else smallest, open_list)
         # pop q out of the OPEN list
         open_list.pop(open_list.index(q))
         # get all successors of q
@@ -38,13 +37,12 @@ def start_algorithm(grid):
 
             successor.parent = q
             open_list.append(successor)
-
+        
         closed_list.append(q)
 
     return closed_list
 
 def draw_path(element):
-    """draw path method"""
     if element.state == "start":
         return
     element.makePath()
