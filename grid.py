@@ -5,13 +5,12 @@ from tiles import Tile
 class Grid():
     """class representing the gird of tiles"""
     def __init__(self, number_of_nodes, block_size, screen):
-        self.drag = False
         self.start_drag_tile = None
         self.start_drag_tile_state = None
         self.tiles = []
         self._initialize_empty_list(number_of_nodes, block_size, screen)
         self.number_of_nodes = number_of_nodes
-        self.start_node = self.tiles[0][0].makeStart()
+        self.start_node = self.tiles[0][0].makeStart() 
         self.finish_node = self.tiles[0][1].makeFinish()
 
     def _initialize_empty_list(self, number_of_nodes, block_size, screen):
@@ -72,9 +71,6 @@ class Grid():
                     self.start_drag_tile = element
                     self.start_drag_tile_state = element.state
 
-    def set_drag(self, value=True):
-        self.drag = value
-
     def drag_drawing(self, mouse_pos):
         for row in self.tiles:
             for element in row:
@@ -89,7 +85,7 @@ class Grid():
 
                     # case3: moving the start and finish tiles
                     elif self.start_drag_tile_state == "start" or self.start_drag_tile_state == "finish":
-                        if element.state == "normal":
+                        if element.state == "normal" or element.state == "path":
                             self.start_drag_tile.swtichTile(element)
 
     def index_2d(self, element):

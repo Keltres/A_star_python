@@ -28,11 +28,7 @@ def main():
                 sys.exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                grid.set_drag(True)
                 grid.set_drag_start_tile(pygame.mouse.get_pos())
-
-            if event.type == pygame.MOUSEBUTTONUP:
-                grid.set_drag(False)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_g:
@@ -42,9 +38,8 @@ def main():
                 elif event.key == pygame.K_c:
                     grid.cleanup(1)
 
-
         # handling of a drag-drawing
-        if grid.drag:
+        if pygame.mouse.get_pressed()[0]:
             grid.drag_drawing(pygame.mouse.get_pos())
             grid.update_grid_list()
 
@@ -53,3 +48,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
