@@ -5,8 +5,6 @@ from tiles import Tile
 class Grid():
     """class representing the gird of tiles"""
     def __init__(self, number_of_nodes, block_size, screen):
-        self.start_drag_tile = None
-        self.start_drag_tile_state = None
         self.tiles = []
         self._initialize_empty_list(number_of_nodes, block_size, screen)
         self.number_of_nodes = number_of_nodes
@@ -19,7 +17,7 @@ class Grid():
         for i in range(number_of_nodes):
             row = []
             for j in range(number_of_nodes):
-                block = Tile((i*(block_size+2)+1,j*(block_size+2)+1), (block_size, block_size), screen)
+                block = Tile((j*(block_size+2)+1,i*(block_size+2)+1), (block_size, block_size), screen)
                 row.append(block)
                 pygame.draw.rect(screen, Tile.TILE_COLOUR, block)
             self.tiles.append(row)
@@ -63,30 +61,60 @@ class Grid():
         # for x in successors:
         #     x.parent = node
         return successors
-        
-    def set_drag_start_tile(self, mouse_pos):
-        for row in self.tiles:
-            for element in row:
-                if element.collidepoint(mouse_pos):
-                    self.start_drag_tile = element
-                    self.start_drag_tile_state = element.state
 
-    def drag_drawing(self, mouse_pos):
-        for row in self.tiles:
-            for element in row:
-                if element.collidepoint(mouse_pos):
-                    # case1: starting at normal, drawing through wall
-                    if (self.start_drag_tile_state == "normal" or self.start_drag_tile_state == "path") and element.state != "start" and element.state != "finish":
-                        element.makeWall()
+    def drag_drawing(self, mouse_pos, previous):
+        """handles drawing of tiles with mouse drag
+        previous argument is where mouse has been before the current tile or null if just pressing mouse"""
+        for row in self.tiles:                                              # \
+            for current in row:                                             #  > this gets the element the mouse is on -> current element
+                if current.collidepoint(mouse_pos) and current != previous: # /
+                    # case1: drawing a wall
+                    if (
+                            (
+                                previous is None or
+                                previous.state == "wall"
+                            )
+                            and
+                            (
+                                current.state == "normal" or
+                                current.state == "path"
+                            )
+                        ):
+                        current.makeWall()
+                        return current
 
-                    # case2: starting at wall, drawing through normal (erasing)
-                    elif self.start_drag_tile_state == "wall" and element.state != "start" and element.state != "finish":
-                        element.makeNormal()
+                    # case2: ereasing walls
+                    elif (
+                            (
+                                previous is None or
+                                previous.state == "normal" or
+                                previous.state == "path"
+                            )
+                            and current.state == "wall"
+                        ):
+                        current.makeNormal()
+                        return current
 
                     # case3: moving the start and finish tiles
-                    elif self.start_drag_tile_state == "start" or self.start_drag_tile_state == "finish":
-                        if element.state == "normal" or element.state == "path":
-                            self.start_drag_tile.swtichTile(element)
+                    elif (previous is None and
+                    (current.state == "start" or current.state == "finish")):
+                        return current
+                    elif (current.state == "path" or current.state == "normal"):
+                        if(previous.state == "start"):
+                            current.makeStart()
+                            self.start_node = current
+                            previous.makeNormal()
+                        elif(previous.state == "finish"):
+                            current.makeFinish()
+                            self.finish_node = current
+                            previous.makeNormal()
+                        return current
+
+                    # in all other cases "skip"
+                    else:
+                        return previous
+
+        return previous
 
     def index_2d(self, element):
         for i, x in enumerate(self.tiles):
@@ -101,6 +129,7 @@ class Grid():
         return abs(x)+abs(y)
 
     def cleanup(self, v = 0):
+        """cleans the grid of paths (and walls if v is anthing other than 0)"""
         for row in self.tiles:
             for element in row:
                 if v != 0:

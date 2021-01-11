@@ -2,7 +2,8 @@
 from functools import reduce
 
 def start_algorithm(grid):
-    """a* algorithm"""
+    """a* algorithm returns an array of Tiles which are the shortest path from start to finish"""
+    grid.cleanup()
     open_list = []
     closed_list = []
     open_list.append(grid.start_node)
@@ -40,11 +41,12 @@ def start_algorithm(grid):
             open_list.append(successor)
 
         closed_list.append(q)
-
+    if not found:
+        return []
     return closed_list
 
 def draw_path(element):
-    """draw path method"""
+    """draws the path from element to start"""
     if element.state == "start":
         return
     element.makePath()

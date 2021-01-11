@@ -20,6 +20,7 @@ grid = Grid(NUMBER_OF_BLOCKS, BLOCK_SIZE, screen)
 
 def main():
     """main"""
+    element = None
     while True:
         clock.tick(45)
         # events handling
@@ -27,21 +28,23 @@ def main():
             if event.type == pygame.QUIT:
                 sys.exit()
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                grid.set_drag_start_tile(pygame.mouse.get_pos())
+            # reset drag drawing
+            if event.type == pygame.MOUSEBUTTONUP:
+                element = None
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_g:
-                    grid.cleanup()
                     path = start_algorithm(grid)
-                    draw_path(path[-1])
+                    if len(path) > 0:
+                        draw_path(path[-1])
+                    else:
+                        print("Path not found")
                 elif event.key == pygame.K_c:
                     grid.cleanup(1)
 
         # handling of a drag-drawing
         if pygame.mouse.get_pressed()[0]:
-            grid.drag_drawing(pygame.mouse.get_pos())
-            grid.update_grid_list()
+            element = grid.drag_drawing(pygame.mouse.get_pos(), element)
 
         pygame.display.flip()
 

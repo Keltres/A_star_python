@@ -23,9 +23,11 @@ class Tile(pygame.Rect):
     def __repr__(self):
         #return "(" + str(self.x) + ", "+ str(self.y) +")"
         return self.state[0] + "(" + str(self.x) + ", "+ str(self.y) +")"
+        # return self.state[0]
 
     def __str__(self):
         return self.state[0] + "(" + str(self.x) + ", "+ str(self.y) +")"
+        # return self.state[0]
 
     def makeWall(self):
         """changes the tiles state to wall"""
@@ -53,20 +55,3 @@ class Tile(pygame.Rect):
         """changes the tiles state to path"""
         self.state = "path"
         pygame.draw.rect(self.screen, Tile.PATH_COLOUR, self)
-
-    def switchstate(self):
-        """Switches between Normal and Wall"""
-        if self.state == "normal":
-            self.state = "wall"
-        elif self.state == "wall":
-            self.state = "normal"
-
-    def swtichTile(self, switchee):
-        self.top, switchee.top = switchee.top, self.top
-        self.left, switchee.left =  switchee.left, self.left
-        if self.state == "start":
-            colour = Tile.START_COLOUR 
-        else: 
-            colour = Tile.FINISH_COLOUR
-        pygame.draw.rect(self.screen, colour, self)
-        pygame.draw.rect(self.screen, Tile.TILE_COLOUR, switchee)
