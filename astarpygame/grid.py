@@ -1,6 +1,6 @@
 """grid class"""
 import pygame
-from tiles import Tile
+from astarpygame.tiles import Tile
 
 class Grid():
     """class representing the gird of tiles"""
@@ -8,8 +8,8 @@ class Grid():
         self.tiles = []
         self._initialize_empty_list(number_of_nodes, block_size, screen)
         self.number_of_nodes = number_of_nodes
-        self.start_node = self.tiles[0][0].makeStart() 
-        self.finish_node = self.tiles[0][1].makeFinish()
+        self.start_node = None
+        self.finish_node = None
 
     def _initialize_empty_list(self, number_of_nodes, block_size, screen):
         """a helper method; returns an array of (size number of nodes)x(size number of nodes) of normal nodes"""
@@ -21,23 +21,6 @@ class Grid():
                 row.append(block)
                 pygame.draw.rect(screen, Tile.TILE_COLOUR, block)
             self.tiles.append(row)
-
-    def update_grid_list(self):
-        """returns sorted grid"""
-        new_grid = []
-        flat_grid = []
-        for row in self.tiles:
-            for element in row:
-                flat_grid.append(element)
-
-        flat_grid.sort(key=lambda element: element.x)
-        for _ in range(len(self.tiles)):
-            row = []
-            for _ in range(len(self.tiles[0])):
-                row.append(flat_grid.pop(0))
-            row.sort(key=lambda element:element.y)
-            new_grid.append(row)
-        self.tiles = new_grid
 
     def getSuccessorsOf(self, node):
         successors = []
@@ -86,11 +69,14 @@ class Grid():
                     # case2: ereasing walls
                     elif (
                             (
+                                (
                                 previous is None or
                                 previous.state == "normal" or
                                 previous.state == "path"
-                            )
-                            and current.state == "wall"
+                                ) 
+                                and current.state == "wall"
+                            ) 
+                            or (previous is not None and previous.state == "normal" and current.state == "path")
                         ):
                         current.makeNormal()
                         return current
@@ -102,11 +88,11 @@ class Grid():
                     elif (current.state == "path" or current.state == "normal"):
                         if(previous.state == "start"):
                             current.makeStart()
-                            self.start_node = current
+                            self.set_start(current)
                             previous.makeNormal()
                         elif(previous.state == "finish"):
                             current.makeFinish()
-                            self.finish_node = current
+                            self.set_finish(current)
                             previous.makeNormal()
                         return current
 
@@ -137,3 +123,15 @@ class Grid():
                         element.makeNormal()
                 if element.state == "path":
                     element.makeNormal()
+
+    def set_start(self, node):
+        if isinstance(node, Tile):
+            self.start_node = node
+        elif isinstance(node, tuple):
+            self.start_node = self.tiles[node[0]][node[1]].makeStart()
+
+    def set_finish(self, node):
+        if isinstance(node, Tile):
+            self.finish_node = node
+        elif isinstance(node, tuple):
+            self.finish_node = self.tiles[node[0]][node[1]].makeFinish()

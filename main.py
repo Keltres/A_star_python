@@ -2,8 +2,8 @@
 import sys
 
 import pygame
-from functions import start_algorithm, draw_path
-from grid import Grid
+from astarpygame.functions import start_algorithm, draw_path
+from astarpygame.grid import Grid
 #import tiles
 
 NUMBER_OF_BLOCKS = 16
@@ -17,6 +17,8 @@ screen.fill((0,0,0))
 
 # initalize grid on screen
 grid = Grid(NUMBER_OF_BLOCKS, BLOCK_SIZE, screen)
+grid.set_start((0, 0))
+grid.set_finish((0, 1))
 
 def main():
     """main"""
