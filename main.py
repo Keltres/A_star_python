@@ -6,8 +6,8 @@ from astarpygame.functions import start_algorithm, draw_path
 from astarpygame.grid import Grid
 #import tiles
 
-NUMBER_OF_BLOCKS = 16
-BLOCK_SIZE = 38
+NUMBER_OF_BLOCKS = 32
+BLOCK_SIZE = 18
 HEIGHT = WIDTH = NUMBER_OF_BLOCKS*(BLOCK_SIZE+2)
 
 pygame.init()
@@ -24,7 +24,7 @@ def main():
     """main"""
     element = None
     while True:
-        clock.tick(45)
+        clock.tick(60)
         # events handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

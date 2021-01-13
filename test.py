@@ -1,4 +1,5 @@
-def a():
-    if 1==0:
-        return "gowno"
-print(a())
+
+for x in range(10):
+    if x == 5:
+        break
+    print(x)

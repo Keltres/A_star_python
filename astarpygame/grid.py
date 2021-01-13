@@ -1,4 +1,5 @@
 """grid class"""
+from math import sqrt
 import pygame
 from astarpygame.tiles import Tile
 
@@ -111,8 +112,8 @@ class Grid():
     def distance(self, a, b):
         x = self.index_2d(a)[0] - self.index_2d(b)[0]
         y = self.index_2d(a)[1] - self.index_2d(b)[1]
-        # return sqrt(x**2 + y**2)
-        return abs(x)+abs(y)
+        return sqrt(x**2 + y**2)
+        # return abs(x)+abs(y)
 
     def cleanup(self, v = 0):
         """cleans the grid of paths (and walls if v is anthing other than 0)"""
