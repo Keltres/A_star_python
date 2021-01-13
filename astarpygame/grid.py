@@ -61,7 +61,8 @@ class Grid():
                             and
                             (
                                 current.state == "normal" or
-                                current.state == "path"
+                                current.state == "path" or
+                                current.state == "search"
                             )
                         ):
                         current.makeWall()
@@ -73,11 +74,14 @@ class Grid():
                                 (
                                 previous is None or
                                 previous.state == "normal" or
-                                previous.state == "path"
+                                previous.state == "path" or 
+                                previous.state == "search"
                                 ) 
                                 and current.state == "wall"
                             ) 
-                            or (previous is not None and previous.state == "normal" and current.state == "path")
+                            or (previous is not None and 
+                                previous.state == "normal" 
+                            and (current.state == "path" or current.state == "search"))
                         ):
                         current.makeNormal()
                         return current
@@ -86,7 +90,7 @@ class Grid():
                     elif (previous is None and
                     (current.state == "start" or current.state == "finish")):
                         return current
-                    elif (current.state == "path" or current.state == "normal"):
+                    elif (current.state == "path" or current.state == "search" or current.state == "normal"):
                         if(previous.state == "start"):
                             current.makeStart()
                             self.set_start(current)
@@ -122,7 +126,7 @@ class Grid():
                 if v != 0:
                     if element.state == "wall":
                         element.makeNormal()
-                if element.state == "path":
+                if element.state == "path" or element.state == "search":
                     element.makeNormal()
 
     def set_start(self, node):

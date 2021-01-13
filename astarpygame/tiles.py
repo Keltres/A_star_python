@@ -1,4 +1,5 @@
 """Tile class"""
+import sys
 import pygame.rect
 
 class Tile(pygame.Rect):
@@ -9,6 +10,7 @@ class Tile(pygame.Rect):
     START_COLOUR = (0, 127, 0)
     FINISH_COLOUR = (127, 0, 0)
     PATH_COLOUR = (127, 127, 0)
+    SEARCH_COLOUR = (80, 80 ,255)
 
     def __init__(self, lt, wh, screen):
         """init"""
@@ -16,8 +18,8 @@ class Tile(pygame.Rect):
         self.screen = screen
         self.state = "normal"
         self.star_h = 0
-        self.star_g = 0
-        self.star_f = 0
+        self.star_g = sys.maxsize
+        self.star_f = sys.maxsize
         self.parent = None
 
     def __repr__(self):
@@ -55,3 +57,8 @@ class Tile(pygame.Rect):
         """changes the tiles state to path"""
         self.state = "path"
         pygame.draw.rect(self.screen, Tile.PATH_COLOUR, self)
+
+    def makeSearch(self):
+        """changes the tiles state to path"""
+        self.state = "search"
+        pygame.draw.rect(self.screen, Tile.SEARCH_COLOUR, self)

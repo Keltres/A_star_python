@@ -1,11 +1,16 @@
 """functions for a* search"""
+import time
 from functools import reduce
+import pygame
 
 def start_algorithm(grid):
     """a* algorithm returns an array of Tiles which are the shortest path from start to finish"""
     grid.cleanup()
     open_list = []
     closed_list = []
+    grid.start_node.star_g = 0
+    grid.start_node.star_h = grid.distance(grid.finish_node, grid.start_node)
+    grid.start_node.star_f = grid.start_node.star_g + grid.start_node.star_h
     open_list.append(grid.start_node)
     found = False
     while len(open_list) != 0 and not found:
@@ -40,7 +45,12 @@ def start_algorithm(grid):
             successor.parent = q
             open_list.append(successor)
 
+
+        if q.state != "start":
+            q.makeSearch()
         closed_list.append(q)
+        # time.sleep(0.005)
+        pygame.display.flip()
     if not found:
         return []
     return closed_list

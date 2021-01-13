@@ -1,5 +1,6 @@
 """bla bla bla"""
 import sys
+import concurrent.futures
 
 import pygame
 from astarpygame.functions import start_algorithm, draw_path
@@ -36,7 +37,9 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_g:
-                    path = start_algorithm(grid)
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(start_algorithm, grid)
+                        path = future.result()
                     if len(path) > 0:
                         draw_path(path[-1])
                     else:
