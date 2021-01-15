@@ -1,5 +1,2 @@
-
-for x in range(10):
-    if x == 5:
-        break
+for x in range(1, 51, 2):
     print(x)
