@@ -17,10 +17,6 @@ class Tile(pygame.Rect):
         super().__init__(lt, wh)
         self.screen = screen
         self.state = "normal"
-        self.star_h = 0
-        self.star_g = sys.maxsize
-        self.star_f = sys.maxsize
-        self.parent = None
 
     def __repr__(self):
         #return "(" + str(self.x) + ", "+ str(self.y) +")"

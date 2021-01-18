@@ -1,16 +1,39 @@
 from random import shuffle
 
 class Maze:
+    """Class that on initalization generates a maze of specified size"""
+    start = None
+    finish = None
 
     def __init__(self, size):
         """Constructor for the Maze class; on initialization creates a square 2d array - a maze"""
         self.matrix = [[1 if x%2 == 1 else 0 for x in range(size)] if y%2 == 1 else [0 for _ in range(size)] for y in range(size)]
         self.walls = [] # list of tuples [(0,1), (2,3)]
         self.regions = [] # list of lists of tuples [[(0,1),(2,3)],[(4,5)]]
-        self.matrix[size-1][1] = 1
-        self.matrix[0][size-2] = 1
         self.size = size
+        self.set_start(self.size-1, 1)    # self.matrix[size-1][1] = 1
+        self.set_finish(0, self.size-2)    # self.matrix[0][size-2] = 1
         self.__main()
+
+    def set_finish(self, x, y):
+        if self.finish:
+            self.matrix[self.finish[0]][self.finish[1]] = 0
+        if not (x == 0 or y == 0):
+            Exception("Wrong finish coordinates")
+        if ((x, y) == self.start):
+            Exception("finish and start are the same cell")
+        self.finish = (x, y)
+        self.matrix[x][y] = 1
+
+    def set_start(self, x, y):
+        if self.start:
+            self.matrix[self.start[0]][self.start[1]] = 0
+        if not (x == self.size-1 or y == self.size-1):
+            Exception("Wrong start coordinates")
+        if not ((x, y) == self.finish):
+            Exception("start and finish are the same cell")
+        self.start = (x, y)
+        self.matrix[x][y] = 1
 
     def __fill_walls(self):
         """Helper method called at initialization"""
@@ -80,4 +103,3 @@ class Region:
     def contain(self, element):
         """returns true if a region contains the element"""
         return element in self.elements
-

@@ -1,16 +1,17 @@
 """grid class"""
-from math import sqrt
 import pygame
-from astarpygame.tiles import Tile
+from utils.tiles import Tile
 
 class Grid():
     """class representing the gird of tiles"""
+    tiles = []
+    start_node = None
+    finish_node = None
+
     def __init__(self, number_of_nodes, block_size, screen):
-        self.tiles = []
         self._initialize_empty_list(number_of_nodes, block_size, screen)
         self.number_of_nodes = number_of_nodes
-        self.start_node = None
-        self.finish_node = None
+        
 
     def _initialize_empty_list(self, number_of_nodes, block_size, screen):
         """a helper method; returns an array of (size number of nodes)x(size number of nodes) of normal nodes"""
@@ -22,29 +23,6 @@ class Grid():
                 row.append(block)
                 pygame.draw.rect(screen, Tile.TILE_COLOUR, block)
             self.tiles.append(row)
-
-    def getSuccessorsOf(self, node):
-        successors = []
-        node.position = self.index_2d(node)
-        try:
-            if node.position[0]-1 >= 0:
-                successors.append(self.tiles[node.position[0]-1][node.position[1]])
-            if node.position[1]-1 >= 0:
-                successors.append(self.tiles[node.position[0]][node.position[1]-1])
-            if node.position[1]+1 < self.number_of_nodes:
-                successors.append(self.tiles[node.position[0]][node.position[1]+1])
-            if node.position[0]+1 < self.number_of_nodes:
-                successors.append(self.tiles[node.position[0]+1][node.position[1]])
-        except IndexError:
-            pass
-
-        #remove walls
-        successors = list(filter(lambda x: x.state != "wall", successors))
-        
-        #change to paths
-        # for x in successors:
-        #     x.parent = node
-        return successors
 
     def drag_drawing(self, mouse_pos, previous):
         """handles drawing of tiles with mouse drag
@@ -113,12 +91,6 @@ class Grid():
                 return (i, x.index(element))
         return(None)
 
-    def distance(self, a, b):
-        x = self.index_2d(a)[0] - self.index_2d(b)[0]
-        y = self.index_2d(a)[1] - self.index_2d(b)[1]
-        return sqrt(x**2 + y**2)
-        # return abs(x)+abs(y)
-
     def cleanup(self, v = 0):
         """cleans the grid of paths (and walls if v is anthing other than 0)"""
         for row in self.tiles:
@@ -140,3 +112,19 @@ class Grid():
             self.finish_node = node
         elif isinstance(node, tuple):
             self.finish_node = self.tiles[node[0]][node[1]].makeFinish()
+
+    def draw_path(self, path):
+        for element in path:
+            self.tiles[element[0]][element[1]].makePath()
+
+    def cellular(self):
+        cells = []
+        for row in self.tiles:
+            new_row = []
+            for cell in row:
+                if cell.state == "wall":
+                    new_row.append(0)
+                else:
+                    new_row.append(1)
+            cells.append(new_row)
+        return cells

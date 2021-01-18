@@ -1,2 +1,3 @@
-for x in range(1, 51, 2):
-    print(x)
+x = (1,2)
+x.parent = "a"
+print(x)

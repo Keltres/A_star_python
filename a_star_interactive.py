@@ -3,8 +3,9 @@ import sys
 import concurrent.futures
 
 import pygame
-from astarpygame.functions import start_algorithm, draw_path
+# from astarpygame.functions import start_algorithm, draw_path
 from astarpygame.grid import Grid
+from astarpygame.astar_search import A_star
 #import tiles
 
 NUMBER_OF_BLOCKS = 32
@@ -25,7 +26,7 @@ def main():
     """main"""
     element = None
     while True:
-        clock.tick(60)
+        clock.tick(300)
         # events handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -37,13 +38,18 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_g:
-                    with concurrent.futures.ThreadPoolExecutor() as executor:
-                        future = executor.submit(start_algorithm, grid)
-                        path = future.result()
+                    # with concurrent.futures.ThreadPoolExecutor() as executor:
+                    #     astar = A_star(grid.cellular(), grid.index_2d(grid.start_node), grid.index_2d(grid.finish_node))
+                    #     future = executor.submit(astar.run())
+                    #     path = future.result()
+                    grid.cleanup()
+                    astar = A_star(grid.cellular(), grid.index_2d(grid.start_node), grid.index_2d(grid.finish_node))
+                    path = astar.run()
                     if len(path) > 0:
-                        draw_path(path[-1])
+                        grid.draw_path(path)
                     else:
                         print("Path not found")
+                    del(astar)
                 elif event.key == pygame.K_c:
                     grid.cleanup(1)
 

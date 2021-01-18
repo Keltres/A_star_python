@@ -2,7 +2,7 @@ import sys
 
 import pygame
 # from tiles import Tile 
-from astarpygame.grid import Grid
+from utils.grid import Grid
 
 def print_table(matrix):
     for row in matrix:
