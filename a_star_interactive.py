@@ -4,8 +4,8 @@ import concurrent.futures
 
 import pygame
 # from astarpygame.functions import start_algorithm, draw_path
-from astarpygame.grid import Grid
-from astarpygame.astar_search import A_star
+from utils.grid import Grid
+from utils.astar_search import A_star
 #import tiles
 
 NUMBER_OF_BLOCKS = 32
